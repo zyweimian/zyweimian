@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>理科人格测评 - 2026强基计划专业适配</title>
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4ECDC4 0%, #52B788 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* 页面样式 */
+        .page {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            margin: 40px auto;
+            max-width: 800px;
+            transition: all 0.3s ease;
+        }
+        
+        /* 首页样式 */
+        .welcome-page {
+            text-align: center;
+        }
+        
+        .welcome-page h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #4ECDC4 0%, #52B788 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .welcome-page h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #666;
+        }
+        
+        .welcome-page p {
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            color: #888;
+        }
+        
+        .start-btn {
+            background: linear-gradient(135deg, #4ECDC4 0%, #52B788 100%);
+            color: white;
+            border: none;
+            padding: 15px 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4);
+        }
+        
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(78, 205, 196, 0.6);
+        }
+        
+        /* 测评页样式 */
+        .quiz-page {
+            display: none;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ECDC4 0%, #52B788 100%);
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            color: #666;
+        }
+        
+        .question {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .question h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .question p {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            color: #666;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+        
+        .option:hover {
+            border-color: #4ECDC4;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.2);
+        }
+        
+        .option.selected {
+            background: linear-gradient(135deg, #4ECDC4 0%, #52B788 100%);
+            color: white;
+            border-color: #4ECDC4;
+        }
+        
+        /* 结果页样式 */
+        .result-page {
+            display: none;
+        }
+        
+        .result-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .personality-card {
+            background: linear-gradient(135deg, #4ECDC4 0%, #52B788 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(78, 205, 196, 0.4);
+        }
+        
+        .personality-code {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        
+        .personality-nickname {
+            font-size: 1.1rem;
+            margin: 15px 0;
+            font-weight: 60;
+            opacity: 0.95;
+        }
+        
+        .personality-nickname span:first-child {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin-right: 10px;
+        }
+        
+        .personality-card h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .personality-card p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+        
+        /* 雷达图容器 */
+        .radar-container {
+            width: 280px;
+            height: 280px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+        
+        .radar-bg {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: url("data:image/svg+xml,%3Csvg width='280' height='280' viewBox='0 0 280 280' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='140' cy='140' r='130' fill='none' stroke='rgba(255,255,255,0.2)' stroke-width='1'/%3E%3Ccircle cx='140' cy='140' r='97.5' fill='none' stroke='rgba(255,255,255,0.2)' stroke-width='1'/%3E%3Ccircle cx='140' cy='140' r='65' fill='none' stroke='rgba(255,255,255,0.2)' stroke-width='1'/%3E%3Ccircle cx='140' cy='140' r='32.5' fill='none' stroke='rgba(255,255,255,0.2)' stroke-width='1'/%3E%3Cline x1='140' y1='10' x2='140' y2='270' stroke='rgba(255,255,255,0.2)' stroke-width='1'/%3E%3Cline x1='10' y1='140' x2='270' y2='140' stroke='rgba(255,255,255,0.2)' stroke-width='1'/%3E%3Cline x1='60' y1='60' x2='220' y2='220' stroke='rgba(255,255,255,0.2)' stroke-width='1'/%3E%3Cline x1='60' y1='220' x2='220' y2='60' stroke='rgba(255,255,255,0.2)' stroke-width='1'/%3E%3C/svg%3E");
+        }
+        
+        .radar-chart {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            fill: rgba(255, 255, 255, 0.3);
+            stroke: white;
+            stroke-width: 2;
+        }
+        
+        .radar-labels {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+        
+        .radar-label {
+            position: absolute;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 50;
+        }
+        
+        .radar-label.t { top: 5px; left: 50%; transform: translateX(-50%); }
+        .radar-label.p { bottom: 5px; left: 50%; transform: translateX(-50%); }
+        .radar-label.m { left: 5px; top: 50%; transform: translateY(-50%); }
+        .radar-label.s { right: 5px; top: 50%; transform: translateY(-50%); }
+        .radar-label.e { left: 30%; top: 30%; }
+        .radar-label.a { right: 30%; bottom: 30%; }
+        .radar-label.i { left: 30%; bottom: 30%; }
+        .radar-label.c { right: 30%; top: 30%; }
+        
+        .dimensions {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        
+        .dimension {
+            text-align: center;
+        }
+        
+        .dimension-bar {
+            width: 60px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            margin: 10px auto;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dimension-fill {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: white;
+            border-radius: 30px;
+            transition: height 0.5s ease;
+        }
+        
+        .dimension-label {
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .personality-description {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .personality-description h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .personality-description p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .learning-style {
+            background: #f0f8f5;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 5px solid #4ECDC4;
+        }
+        
+        .learning-style h3 {
+            color: #2d8668;
+            margin-bottom: 10px;
+        }
+        
+        .learning-style ul {
+            padding-left: 20px;
+            color: #666;
+            line-height: 1.8;
+        }
+        
+        .majors {
+            margin-bottom: 30px;
+        }
+        
+        .majors h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .major-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 5px solid #4ECDC4;
+        }
+        
+        .major-card h4 {
+            margin-bottom: 8px;
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .major-score {
+            background: #e6f7f2;
+            color: #2d8668;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: normal;
+        }
+        
+        .major-card p {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+        
+        .result-buttons {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .restart-btn, .share-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .restart-btn {
+            background: linear-gradient(135deg, #4ECDC4 0%, #52B788 100%);
+            color: white;
+        }
+        
+        .restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4);
+        }
+        
+        .share-btn {
+            background: #f8f9fa;
+            color: #4ECDC4;
+            border: 2px solid #4ECDC4;
+        }
+        
+        .share-btn:hover {
+            background: #4ECDC4;
+            color: white;
+        }
+        
+        /* 响应式布局 */
+        @media (max-width: 768px) {
+            .page {
+                padding: 20px;
+                margin: 20px auto;
+            }
+            
+            .welcome-page h1 {
+                font-size: 2rem;
+            }
+            
+            .welcome-page h2 {
+                font-size: 1.2rem;
+            }
+            
+            .options {
+                gap: 12px;
+            }
+            
+            .option {
+                padding: 15px;
+            }
+            
+            .radar-container {
+                width: 240px;
+                height: 240px;
+            }
+            
+            .dimensions {
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+            
+            .dimension {
+                flex: 1 1 calc(50% - 20px);
+            }
+            
+            .result-buttons {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .welcome-page h1 {
+                font-size: 1.8rem;
+            }
+            
+            .personality-card h2 {
+                font-size: 1.5rem;
+            }
+            
+            .personality-card p {
+                font-size: 1rem;
+            }
+            
+            .personality-nickname {
+                font-size: 1rem;
+            }
+            
+            .radar-container {
+                width: 200px;
+                height: 200px;
+            }
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 首页 -->
+        <div class="page welcome-page" id="welcomePage">
+            <h1>理科人格16型测评</h1>
+            <h2>2026强基计划专业精准适配</h2>
+            <p>16道题，4大维度，定位你的专属理科人格</p>
+            <p>基于MBTI人格理论+霍兰德职业兴趣+STEM能力模型</p>
+            <button class="start-btn" id="startBtn">开始测评</button>
+        </div>
+        
+        <!-- 测评页 -->
+        <div class="page quiz-page" id="quizPage">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">1/16</div>
+            <div class="question" id="question">
+                <h3>第1题</h3>
+                <p>解一道很难的物理题时，你更倾向于？</p>
+            </div>
+            <div class="options" id="options">
+                <div class="option" data-answer="T">
+                    A. 先推导公式，从理论上理解每一步的逻辑 🧠
+                </div>
+                <div class="option" data-answer="B">
+                    B. 结合实例拆解，先找相似题型的解题框架 📚
+                </div>
+                <div class="option" data-answer="P">
+                    C. 先画示意图，动手模拟过程再找思路 🔧
+                </div>
+            </div>
+        </div>
+        
+        <!-- 结果页 -->
+        <div class="page result-page" id="resultPage">
+            <div class="result-header">
+                <h1>你的理科人格画像</h1>
+                <p>基于16型人格体系的精准分析</p>
+            </div>
+            <div class="personality-card" id="personalityCard">
+                <div class="personality-code" id="personalityCode">INTJ-T</div>
+                <h2 id="personalityName">逻辑架构师</h2>
+                <p id="personalitySlogan">用逻辑构建世界的秩序</p>
+                <div class="personality-nickname" id="personalityNickname">
+                    <span>理论物理专精</span> | <span>《星际穿越》·库珀</span>
+                </div>
+                
+                <!-- 雷达图 -->
+                <div class="radar-container">
+                    <div class="radar-bg"></div>
+                    <svg class="radar-chart" id="radarChart" viewBox="0 0 280 280">
+                        <polygon points="140,30 80,100 80,200 140,250 200,200 200,100" />
+                    </svg>
+                    <div class="radar-labels">
+                        <div class="radar-label t">理论型(T)</div>
+                        <div class="radar-label p">实践型(P)</div>
+                        <div class="radar-label m">微观型(M)</div>
+                        <div class="radar-label s">宏观型(S)</div>
+                        <div class="radar-label e">探索型(E)</div>
+                        <div class="radar-label a">应用型(A)</div>
+                        <div class="radar-label i">独立型(I)</div>
+                        <div class="radar-label c">协作型(C)</div>
+                    </div>
+                </div>
+                
+                <div class="dimensions">
+                    <div class="dimension">
+                        <div class="dimension-bar">
+                            <div class="dimension-fill" id="dimT" style="height: 80%;"></div>
+                        </div>
+                        <div class="dimension-label">理论思维</div>
+                    </div>
+                    <div class="dimension">
+                        <div class="dimension-bar">
+                            <div class="dimension-fill" id="dimM" style="height: 70%;"></div>
+                        </div>
+                        <div class="dimension-label">微观探索</div>
+                    </div>
+                    <div class="dimension">
+                        <div class="dimension-bar">
+                            <div class="dimension-fill" id="dimE" style="height: 90%;"></div>
+                        </div>
+                        <div class="dimension-label">探索动机</div>
+                    </div>
+                    <div class="dimension">
+                        <div class="dimension-bar">
+                            <div class="dimension-fill" id="dimI" style="height: 60%;"></div>
+                        </div>
+                        <div class="dimension-label">独立倾向</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 人格解读 -->
+            <div class="personality-description" id="personalityDescription">
+                <h3>人格画像核心特征</h3>
+                <p>你属于「逻辑架构师」型理科人格（INTJ-T），擅长从复杂现象中提炼底层规律，偏好通过理论推导解决问题，对基础科学的深度钻研有天然热情。你的思维模式具有强抽象性和系统性，能快速构建知识体系的逻辑框架，适合从事需要深度独立思考的基础科研工作。</p>
+            </div>
+            
+            <!-- 学习风格建议 -->
+            <div class="learning-style" id="learningStyle">
+                <h3>适配学习风格</h3>
+                <ul>
+                    <li>优先选择理论导向的课程体系，如数学分析、理论物理、抽象代数等</li>
+                    <li>适合「问题驱动」的学习模式，先明确核心问题再反向推导知识边界</li>
+                    <li>建议搭配少量实验课程平衡理论与实践，避免过度脱离应用场景</li>
+                    <li>科研方向可侧重基础理论创新，如量子力学、数论、宇宙学等领域</li>
+                </ul>
+            </div>
+            
+            <!-- 专业推荐 -->
+            <div class="majors" id="majors">
+                <h3>强基计划专业适配推荐</h3>
+                <div class="major-card">
+                    <h4>数学与应用数学 <span class="major-score">适配度 95%</span></h4>
+                    <p>核心适配点：抽象思维、逻辑推理、公理化体系构建能力高度匹配</p>
+                    <p>核心课程：数学分析、高等代数、实变函数、拓扑学、微分几何</p>
+                    <p>就业方向：高校/科研院所（基础数学研究）、金融机构（量化分析）、科技企业（算法研发）</p>
+                    <p>强基计划适配院校：北京大学、复旦大学、中国科学技术大学</p>
+                </div>
+                <div class="major-card">
+                    <h4>物理学 <span class="major-score">适配度 90%</span></h4>
+                    <p>核心适配点：理论物理方向与你的抽象推理能力高度契合，适合探索宇宙基本规律</p>
+                    <p>核心课程：理论力学、电动力学、量子力学、热力学与统计物理、固体物理</p>
+                    <p>就业方向：高校/科研院所（粒子物理/凝聚态物理研究）、航天军工（基础理论应用）</p>
+                    <p>强基计划适配院校：清华大学、北京大学、中国科学技术大学</p>
+                </div>
+                <div class="major-card">
+                    <h4>理论与应用力学 <span class="major-score">适配度 85%</span></h4>
+                    <p>核心适配点：力学建模与数学推导能力匹配，适合将理论应用于工程问题</p>
+                    <p>核心课程：连续介质力学、弹性力学、流体力学、计算力学、变分法</p>
+                    <p>就业方向：航空航天（飞行器设计）、机械制造（结构分析）、能源领域（流体力学应用）</p>
+                    <p>强基计划适配院校：清华大学、上海交通大学、哈尔滨工业大学</p>
+                </div>
+            </div>
+            
+            <div class="result-buttons">
+                <button class="restart-btn" id="restartBtn">重新测评</button>
+                <button class="share-btn" id="shareBtn">分享我的人格</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 测评题目数据
+        const questions = [
+            {id:1,dimension:'thinking',text:'解一道很难的物理题时，你更倾向于？',options:[{text:'A. 先推导公式，从理论上理解每一步的逻辑 🧠',value:'T'},{text:'B. 结合实例拆解，先找相似题型的解题框架 📚',value:'B'},{text:'C. 先画示意图，动手模拟过程再找思路 🔧',value:'P'}]},
+            {id:2,dimension:'thinking',text:'学习新的数学定理时，你的优先级是？',options:[{text:'A. 先证明定理的严谨性，理解推导过程 🧮',value:'T'},{text:'B. 先掌握定理的适用场景，再补全证明 📝',value:'B'},{text:'C. 先找实际案例应用，再回头理解原理 📊',value:'P'}]},
+            {id:3,dimension:'thinking',text:'面对实验数据与理论不符的情况，你会？',options:[{text:'A. 先质疑理论假设，重新推导模型 🤔',value:'T'},{text:'B. 同时检查实验流程和理论模型 📋',value:'B'},{text:'C. 先重复实验验证数据，排查操作误差 🔬',value:'P'}]},
+            {id:4,dimension:'thinking',text:'构建知识体系时，你更偏好？',options:[{text:'A. 从公理出发，层层推导构建体系 🏗️',value:'T'},{text:'B. 先搭建框架，再填充细节和案例 🗺️',value:'B'},{text:'C. 从具体案例出发，归纳形成体系 🧩',value:'P'}]},
+            {id:5,dimension:'object',text:'选择科研方向时，你更感兴趣？',options:[{text:'A. 微观世界（原子/分子/粒子层面）⚛️',value:'M'},{text:'B. 介观系统（细胞/器件/材料层面）🧬',value:'B'},{text:'C. 宏观现象（天体/气候/生态层面）🌌',value:'S'}]},
+            {id:6,dimension:'object',text:'观察自然现象时，你更关注？',options:[{text:'A. 构成要素的微观相互作用 🔗',value:'M'},{text:'B. 系统整体与局部的关联 🕸️',value:'B'},{text:'C. 现象的宏观规律和演化趋势 📈',value:'S'}]},
+            {id:7,dimension:'object',text:'选择实验工具时，你更倾向？',options:[{text:'A. 高精度微观表征工具（显微镜/光谱仪）🔍',value:'M'},{text:'B. 多尺度测量系统（兼顾微观与宏观）📡',value:'B'},{text:'C. 宏观数据采集设备（传感器/遥感系统）📊',value:'S'}]},
+            {id:8,dimension:'object',text:'解决工程问题时，你更关注？',options:[{text:'A. 材料/器件的微观结构优化 🧪',value:'M'},{text:'B. 系统组件的匹配性与协同性 ⚙️',value:'B'},{text:'C. 整体系统的性能与环境适配 🚀',value:'S'}]},
+            {id:9,dimension:'motivation',text:'学习科学知识的核心驱动力是？',options:[{text:'A. 探索未知，满足对真理的好奇心 ✨',value:'E'},{text:'B. 既想探索原理，也想解决实际问题 🎯',value:'B'},{text:'C. 解决实际问题，创造实用价值 🛠️',value:'A'}]},
+            {id:10,dimension:'motivation',text:'选择科研课题时，你的标准是？',options:[{text:'A. 学术创新性，能否突破现有认知 🎓',value:'E'},{text:'B. 兼顾学术价值与应用前景 📊',value:'B'},{text:'C. 实际应用价值，能否落地转化 💡',value:'A'}]},
+            {id:11,dimension:'motivation',text:'职业规划中，你更向往？',options:[{text:'A. 高校/科研院所，专注基础研究 🏛️',value:'E'},{text:'B. 研发机构，兼顾基础与应用 🧪',value:'B'},{text:'C. 企业/工程领域，聚焦技术落地 🏭',value:'A'}]},
+            {id:12,dimension:'motivation',text:'评价科研成果时，你更看重？',options:[{text:'A. 对学科理论体系的贡献 📚',value:'E'},{text:'B. 理论突破与实际应用的平衡 ⚖️',value:'B'},{text:'C. 解决实际问题的效果 🎯',value:'A'}]},
+            {id:13,dimension:'social',text:'做科研项目时，你更偏好？',options:[{text:'A. 独立负责核心模块，自主把控节奏 🧑‍🔬',value:'I'},{text:'B. 小团队协作，明确分工各负其责 🤝',value:'B'},{text:'C. 大团队协作，多角色互动头脑风暴 👥',value:'C'}]},
+            {id:14,dimension:'social',text:'遇到学术难题时，你会？',options:[{text:'A. 先独立思考，穷尽思路后再请教 🧠',value:'I'},{text:'B. 适时请教，结合独立思考与外部建议 📖',value:'B'},{text:'C. 尽早讨论，通过交流碰撞思路 💬',value:'C'}]},
+            {id:15,dimension:'social',text:'学术交流时，你更倾向？',options:[{text:'A. 深度一对一交流，避免无效社交 🗣️',value:'I'},{text:'B. 小型研讨会，有针对性的交流 🎪',value:'B'},{text:'C. 大型学术会议，广泛交流拓展视野 🎪',value:'C'}]},
+            {id:16,dimension:'social',text:'团队角色中，你更适合？',options:[{text:'A. 技术核心，专注独立攻关 🎯',value:'I'},{text:'B. 协调者，平衡独立工作与团队协作 🧭',value:'B'},{text:'C. 组织者，统筹团队推进项目 🚀',value:'C'}]}
+        ];
+
+        // 人格数据（完整无截断）
+        const personalities = {
+            'T-M-E-I':{code:'INTJ-T',name:'逻辑架构师',slogan:'用逻辑构建世界的秩序',nickname:'理论物理专精',movieRole:'《星际穿越》·库珀',description:'你属于「逻辑架构师」型理科人格（INTJ-T），擅长从复杂现象中提炼底层规律，偏好通过理论推导解决问题，对基础科学的深度钻研有天然热情。',learningStyle:['优先选择理论导向的课程体系','适合问题驱动学习'],radarData:[130,60,120,70,125,50,110,65],dimensions:{T:80,M:70,E:90,I:60},majors:[{name:'数学与应用数学',score:95,reason:'抽象思维匹配',courses:'数学分析',prospect:'科研/金融/算法',colleges:'北大/复旦/中科大'}]},
+            'T-M-E-B':{code:'INTP-T',name:'量子探索者',slogan:'在微观世界寻找答案',nickname:'量子物理专精',movieRole:'《生活大爆炸》·谢尔顿',description:'擅长微观理论探索，思维灵活有创造力',learningStyle:['理论+实验结合','小团队研究'],radarData:[120,70,125,65,120,60,80,90],dimensions:{T:75,M:80,E:85,I:50},majors:[{name:'物理学（量子信息）',score:92,reason:'微观探索欲匹配',courses:'量子力学',prospect:'量子计算/通信',colleges:'中科大/清华/北大'}]},
+            'T-S-E-I':{code:'INFJ-T',name:'宇宙观测者',slogan:'用理论解读宇宙',nickname:'天体物理专精',movieRole:'《火星救援》·布伦达',description:'擅长宏观理论构建，对宇宙学有强烈兴趣',learningStyle:['天文观测+理论','编程数据处理'],radarData:[115,75,60,120,125,55,115,60],dimensions:{T:75,M:40,E:90,I:70},majors:[{name:'天文学',score:93,reason:'宏观探索匹配',courses:'天体物理/宇宙学',prospect:'天文台/科研',colleges:'南大/中科大/北大'}]},
+            'T-S-A-C':{code:'ENTJ-T',name:'工程架构师',slogan:'理论构建工程逻辑',nickname:'航空航天专精',movieRole:'《地心引力》·瑞安',description:'理论+工程思维，擅长团队领导与系统设计',learningStyle:['工程理论+设计','项目管理'],radarData:[110,80,70,115,60,120,65,115],dimensions:{T:70,M:45,E:40,I:35},majors:[{name:'航空航天工程',score:94,reason:'系统工程匹配',courses:'力学/飞行器设计',prospect:'航天/军工',colleges:'北航/西工大/哈工大'}]},
+            'P-M-E-I':{code:'INFP-T',name:'实验探索者',slogan:'实验触碰科学边界',nickname:'实验物理专精',movieRole:'《绝命毒师》·怀特',description:'强实验能力，擅长微观实验设计',learningStyle:['实验导向','误差分析'],radarData:[60,125,120,70,120,65,115,60],dimensions:{T:40,M:80,E:85,I:70},majors:[{name:'实验物理',score:92,reason:'实验能力匹配',courses:'物理实验/精密测量',prospect:'科研/计量',colleges:'中科大/清华/北大'}]},
+            'P-S-A-C':{code:'ENFP-T',name:'创新工程师',slogan:'实践转化创意',nickname:'智能制造专精',movieRole:'《火星救援》·马克',description:'动手+宏观思维，擅长工程创新',learningStyle:['设计+制作','工程实践'],radarData:[70,120,75,115,65,115,60,120],dimensions:{T:45,M:40,E:45,I:35},majors:[{name:'机械设计',score:93,reason:'工程设计匹配',courses:'机械/智能制造',prospect:'装备/机器人',colleges:'清华/上交/华科'}]},
+            'B-S-A-C':{code:'ESTJ-T',name:'数据工程师',slogan:'数据驱动工程',nickname:'数据科学专精',movieRole:'《模仿游戏》·图灵',description:'理论实践平衡，擅长数据工程应用',learningStyle:['数据+模型+应用','编程分析'],radarData:[95,95,80,100,75,105,70,110],dimensions:{T:60,M:50,E:55,I:45},majors:[{name:'数据科学',score:94,reason:'数据处理匹配',courses:'大数据/机器学习',prospect:'互联网/金融',colleges:'清华/北大/浙大'}]},
+            'B-M-A-C':{code:'ESFJ-T',name:'生物工程师',slogan:'技术赋能生命科学',nickname:'生物工程专精',movieRole:'《侏罗纪》·艾莉',description:'生物+工程交叉，擅长团队应用研发',learningStyle:['生物原理+工程设计','跨学科学习'],radarData:[90,100,110,80,70,110,75,105],dimensions:{T:55,M:75,E:50,I:40},majors:[{name:'生物工程',score:92,reason:'生物工程匹配',courses:'生化/生物反应工程',prospect:'药企/生物制造',colleges:'清华/上交/浙大'}]},
+            'T-M-A-I':{code:'INFJ-A',name:'理论应用者',slogan:'理论照进现实',nickname:'计算物理专精',movieRole:'《美丽心灵》·纳什',description:'理论+计算，擅长独立建模实现',learningStyle:['理论建模+编程','数值计算'],radarData:[115,75,115,75,70,115,110,70],dimensions:{T:75,M:75,E:50,I:70},majors:[{name:'计算物理',score:91,reason:'建模计算匹配',courses:'理论物理/数值分析',prospect:'科研/数值模拟',colleges:'中科大/清华/北大'}]},
+            'T-S-E-C':{code:'ENTP-T',name:'系统探索者',slogan:'探索宏观系统规律',nickname:'系统科学专精',movieRole:'《星际迷航》·斯波克',description:'宏观系统思维，擅长团队理论研究',learningStyle:['系统建模+团队验证','跨学科思考'],radarData:[110,80,75,115,115,75,70,110],dimensions:{T:70,M:45,E:80,I:45},majors:[{name:'系统科学',score:90,reason:'系统思维匹配',courses:'系统理论/复杂性科学',prospect:'科研/系统分析',colleges:'北师大/中科大/上交'}]},
+            'P-M-A-I':{code:'ISFP-T',name:'精密实验师',slogan:'精密实验实现创新',nickname:'微电子专精',movieRole:'《黑豹》·苏睿',description:'精密实验+微观应用，独立细节把控',learningStyle:['精密操作+微纳加工','实验优化'],radarData:[70,115,115,75,75,110,105,75],dimensions:{T:45,M:75,E:55,I:65},majors:[{name:'微电子',score:92,reason:'精密实验匹配',courses:'半导体/芯片设计',prospect:'芯片/半导体',colleges:'清华/北大/复旦'}]},
+            'P-S-E-C':{code:'ESFP-T',name:'观测工程师',slogan:'观测探索宏观规律',nickname:'地球物理专精',movieRole:'《地心抢险》·乔什',description:'观测+宏观探索，擅长团队实地操作',learningStyle:['观测分析+团队研讨','现场数据采集'],radarData:[75,110,70,115,110,75,70,110],dimensions:{T:45,M:45,E:75,I:45},majors:[{name:'地球物理',score:90,reason:'观测分析匹配',courses:'地球物理/勘探技术',prospect:'勘探/地震监测',colleges:'中科大/北大/吉大'}]},
+            'B-M-E-I':{code:'INTP-A',name:'微观平衡者',slogan:'平衡理论与实验',nickname:'凝聚态物理专精',movieRole:'《万物理论》·霍金',description:'理论实验平衡，独立微观研究',learningStyle:['理论假设+实验验证','循环学习'],radarData:[95,95,115,75,110,80,105,75],dimensions:{T:60,M:75,E:75,I:65},majors:[{name:'凝聚态物理',score:91,reason:'微观平衡匹配',courses:'固体物理/纳米材料',prospect:'材料/物理科研',colleges:'清华/北大/中科大'}]},
+            'B-M-E-C':{code:'ENTP-A',name:'微观协作师',slogan:'协作探索微观边界',nickname:'材料科学专精',movieRole:'《超能陆战队》·泰迪',description:'理论实验平衡+团队协作',learningStyle:['团队实验+理论研讨','交叉创新'],radarData:[90,100,110,80,105,85,75,110],dimensions:{T:55,M:75,E:70,I:45},majors:[{name:'材料科学',score:90,reason:'材料研究匹配',courses:'材料物理/化学',prospect:'新材料研发',colleges:'清华/北科/上交'}]},
+            'B-S-E-I':{code:'INTJ-A',name:'宏观独立者',slogan:'独立探索宏观规律',nickname:'环境科学专精',movieRole:'《风之谷》·娜乌西卡',description:'宏观思维+独立研究，擅长系统分析',learningStyle:['独立建模+宏观分析','系统研究'],radarData:[100,90,70,110,110,80,100,70],dimensions:{T:65,M:45,E:75,I:65},majors:[{name:'环境科学',score:89,reason:'宏观系统匹配',courses:'环境科学/生态',prospect:'环保/科研',colleges:'北大/南大/北师大'}]},
+            'B-S-E-B':{code:'ENFJ-T',name:'宏观平衡师',slogan:'平衡探索宏观系统',nickname:'能源科学专精',movieRole:'《钢铁侠》·托尼',description:'宏观思维+平衡协作，擅长能源系统',learningStyle:['系统研究+平衡协作','能源创新'],radarData:[95,95,75,105,105,85,80,90],dimensions:{T:60,M:50,E:70,I:50},majors:[{name:'能源科学',score:90,reason:'能源系统匹配',courses:'能源/动力工程',prospect:'新能源/电力',colleges:'清华/浙大/上交'}]}
+        };
+
+        // 测评核心逻辑
+        let currentQuestion = 0;
+        let answers = {thinking:'',object:'',motivation:'',social:''};
+        let count = {T:0,P:0,M:0,S:0,E:0,A:0,I:0,C:0};
+
+        // DOM元素
+        const welcomePage = document.getElementById('welcomePage');
+        const quizPage = document.getElementById('quizPage');
+        const resultPage = document.getElementById('resultPage');
+        const startBtn = document.getElementById('startBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+
+        // 开始测评
+        startBtn.addEventListener('click', () => {
+            welcomePage.style.display = 'none';
+            quizPage.style.display = 'block';
+            loadQuestion();
+        });
+
+        // 重新测评
+        restartBtn.addEventListener('click', () => {
+            currentQuestion = 0;
+            answers = {thinking:'',object:'',motivation:'',social:''};
+            count = {T:0,P:0,M:0,S:0,E:0,A:0,I:0,C:0};
+            resultPage.style.display = 'none';
+            quizPage.style.display = 'block';
+            loadQuestion();
+        });
+
+        // 加载题目
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            questionEl.innerHTML = `<h3>第${q.id}题</h3><p>${q.text}</p>`;
+            optionsEl.innerHTML = '';
+            
+            q.options.forEach(opt => {
+                const div = document.createElement('div');
+                div.className = 'option';
+                div.dataset.answer = opt.value;
+                div.textContent = opt.text;
+                div.addEventListener('click', () => selectOption(opt.value, q.dimension));
+                optionsEl.appendChild(div);
+            });
+            
+            // 更新进度
+            const percent = ((currentQuestion + 1) / questions.length) * 100;
+            progressFill.style.width = percent + '%';
+            progressText.textContent = `${currentQuestion + 1}/${questions.length}`;
+        }
+
+        // 选择选项
+        function selectOption(value, dim) {
+            // 计数
+            if(value !== 'B') count[value]++;
+            
+            // 下一题/结果
+            currentQuestion++;
+            if(currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                calculateResult();
+            }
+        }
+
+        // 计算结果
+        function calculateResult() {
+            // 维度判断
+            const t = count.T >= count.P ? 'T' : 'P';
+            const o = count.M >= count.S ? 'M' : 'S';
+            const m = count.E >= count.A ? 'E' : 'A';
+            const s = count.I >= count.C ? 'I' : 'C';
+            
+            const key = `${t}-${o}-${m}-${s}`;
+            const personality = personalities[key] || personalities['T-M-E-I'];
+            showResult(personality);
+        }
+
+        // 显示结果
+        function showResult(p) {
+            quizPage.style.display = 'none';
+            resultPage.style.display = 'block';
+            
+            document.getElementById('personalityCode').textContent = p.code;
+            document.getElementById('personalityName').textContent = p.name;
+            document.getElementById('personalitySlogan').textContent = p.slogan;
+            document.getElementById('personalityNickname').innerHTML = `<span>${p.nickname}</span> | <span>${p.movieRole}</span>`;
+            document.getElementById('personalityDescription').innerHTML = `<h3>人格画像核心特征</h3><p>${p.description}</p>`;
+            
+            // 学习风格
+            const styleHtml = `<h3>适配学习风格</h3><ul>${p.learningStyle.map(i => `<li>${i}</li>`).join('')}</ul>`;
+            document.getElementById('learningStyle').innerHTML = styleHtml;
+            
+            // 专业推荐
+            let majorHtml = `<h3>强基计划专业适配推荐</h3>`;
+            p.majors.forEach(m => {
+                majorHtml += `
+                <div class="major-card">
+                    <h4>${m.name} <span class="major-score">适配度 ${m.score}%</span></h4>
+                    <p>核心适配点：${m.reason}</p>
+                    <p>核心课程：${m.courses}</p>
+                    <p>就业方向：${m.prospect}</p>
+                    <p>适配院校：${m.colleges}</p>
+                </div>`;
+            });
+            document.getElementById('majors').innerHTML = majorHtml;
+            
+            // 维度进度条
+            document.getElementById('dimT').style.height = p.dimensions.T + '%';
+            document.getElementById('dimM').style.height = p.dimensions.M + '%';
+            document.getElementById('dimE').style.height = p.dimensions.E + '%';
+            document.getElementById('dimI').style.height = p.dimensions.I + '%';
+        }
+    </script>
+</body>
+</html>
