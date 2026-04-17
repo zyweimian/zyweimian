@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trae 重生之我是理科生测试</title>
+    
+    <!-- 外部库 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        /* --- 全局与变量定义 --- */
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #50e3c2;
+            --dark-text: #333;
+            --light-text: #fff;
+            --bg-color: #f4f7f9;
+            --card-bg: #fff;
+            --border-color: #e8e8e8;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+
+        /* --- 布局与导航 --- */
+        .main-header {
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 0 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            height: 60px;
+        }
+
+        .navbar {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+        }
+
+        .nav-logo {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark-text);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary-color);
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 1.5rem auto;
+            padding: 0 1rem;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- 响应式设计 --- */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                width: 100%;
+                background-color: var(--card-bg);
+                flex-direction: column;
+                text-align: center;
+                padding: 1rem 0;
+                box-shadow: var(--shadow);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .hamburger {
+                display: block;
+            }
+            
+            .main-container {
+                margin-top: 1rem;
+            }
+        }
+
+        /* --- 通用组件 --- */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+        .btn-secondary:hover {
+             box-shadow: 0 6px 20px rgba(80, 227, 194, 0.4);
+        }
+
+        h1, h2, h3 {
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        h1 { font-size: 2rem; }
+        h2 { font-size: 1.5rem; }
+        h3 { font-size: 1.2rem; }
+
+        /* --- 首页 --- */
+        .hero {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+        .hero h1 {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+        }
+        .hero p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        .feature-card {
+            text-align: center;
+        }
+        .feature-card i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        /* --- 测评中心 --- */
+        #test-page .question-container {
+            text-align: center;
+        }
+        #test-page .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        #test-page .progress-bar-inner {
+            height: 100%;
+            background-color: var(--secondary-color);
+            width: 0;
+            transition: width 0.5s;
+        }
+        #test-page .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        #test-page .option-btn {
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--card-bg);
+            color: var(--dark-text);
+            border: 1px solid var(--border-color);
+            text-align: left;
+        }
+        #test-page .option-btn:hover {
+            background-color: #f0f8ff;
+            border-color: var(--primary-color);
+            transform: none;
+            box-shadow: none;
+        }
+        @media (min-width: 768px) {
+            #test-page .options-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* --- 报告页 --- */
+        #report-page .report-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        #report-page .report-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        @media (min-width: 992px) {
+            #report-page .report-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        #report-page #radar-chart-container {
+            min-height: 300px;
+        }
+        #report-page .major-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #report-page .major-list-item:hover {
+            background-color: #f9f9f9;
+        }
+        #report-page .report-actions {
+            text-align: center;
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        /* --- 社区 & 成长营 --- */
+        .item-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .item-card {
+            overflow: hidden;
+        }
+        .item-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        .item-card-content {
+            padding: 1rem;
+        }
+        .item-card-content h3 {
+            font-size: 1.1rem;
+        }
+        .item-card-meta {
+            font-size: 0.9rem;
+            color: #777;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .item-card-meta img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+        }
+
+        /* --- 个人中心 --- */
+        #profile-page .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        #profile-page .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+        }
+        #profile-page .profile-info h2 {
+            margin-bottom: 0.25rem;
+        }
+        #profile-page .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+        }
+        #profile-page .history-item:last-child {
+            border-bottom: none;
+        }
+
+        /* --- 登录弹窗 --- */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .modal-content input {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 顶部导航栏 -->
+    <header class="main-header">
+        <nav class="navbar">
+            <a href="#" class="nav-logo" data-page="home-page">TraeTest</a>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#" class="nav-link active" data-page="home-page">首页</a></li>
+                <li><a href="#" class="nav-link" data-page="test-intro-page">测评中心</a></li>
+                <li><a href="#" class="nav-link" data-page="growth-page">成长营</a></li>
+                <li><a href="#" class="nav-link" data-page="community-page">社区</a></li>
+                <li><a href="#" class="nav-link" data-page="profile-page">个人中心</a></li>
+                <li><a href="#" id="login-btn-nav" class="nav-link">登录</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+        </nav>
+    </header>
+
+    <!-- 主内容区域 -->
+    <main class="main-container">
+        <!-- 首页 -->
+        <section id="home-page" class="page active">
+            <div class="card hero">
+                <h1>开启你的重生理科人生</h1>
+                <p>30道沉浸式场景题，发现你的理科人格与天命专业，规划你的未来生涯。</p>
+                <button class="btn" id="start-test-btn-home">
+                    <i class="fas fa-rocket"></i> 立即开始测评
+                </button>
+            </div>
+            <div class="features-grid">
+                <div class="card feature-card">
+                    <i class="fas fa-brain"></i>
+                    <h3>理性思维提升</h3>
+                    <p>通过每日一练和思维游戏，系统性提升你的逻辑决策能力。</p>
+                </div>
+                <div class="card feature-card">
+                    <i class="fas fa-users"></i>
+                    <h3>理科生社区</h3>
+                    <p>与志同道合的伙伴交流，分享选科、专业就读和升学经验。</p>
+                </div>
+                <div class="card feature-card">
+                    <i class="fas fa-book-open"></i>
+                    <h3>专业深度解读</h3>
+                    <p>100+理科专业库，从选科要求到就业前景，一网打尽。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 测评介绍页 -->
+        <section id="test-intro-page" class="page">
+            <div class="card text-center">
+                <h2>主线测评：重生之我是理科生</h2>
+                <p>你将回到人生的关键岔路口，通过一系列选择，重新塑造你的理科人生。本次测评完全免费，游客也可完成。</p>
+                <button class="btn" id="start-test-btn-intro">开始测评</button>
+            </div>
+        </section>
+
+        <!-- 测评答题页 -->
+        <section id="test-page" class="page">
+            <div class="card">
+                <div class="progress-bar">
+                    <div class="progress-bar-inner" id="progress-bar-inner"></div>
+                </div>
+                <div id="question-container" class="question-container">
+                    <h2 id="question-title"></h2>
+                    <div class="options-grid" id="options-grid"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 报告页 -->
+        <section id="report-page" class="page">
+            <div class="card report-header">
+                <h1 id="report-personality"></h1>
+                <p id="report-description"></p>
+            </div>
+            <div class="report-grid">
+                <div class="card">
+                    <h3><i class="fas fa-chart-pie"></i> 8维能力雷达图</h3>
+                    <div id="radar-chart-container">
+                        <canvas id="radar-chart"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-graduation-cap"></i> TOP3 适配专业</h3>
+                    <div id="major-list"></div>
+                </div>
+            </div>
+            <div class="report-actions">
+                <button class="btn" id="share-report-btn"><i class="fas fa-share-alt"></i> 分享报告</button>
+                <button class="btn btn-secondary" id="save-report-btn"><i class="fas fa-download"></i> 保存为图片</button>
+            </div>
+        </section>
+
+        <!-- 专业详情页 -->
+        <section id="major-detail-page" class="page">
+            <div class="card">
+                <button id="back-to-report-btn" class="btn btn-secondary" style="margin-bottom: 1rem;"><i class="fas fa-arrow-left"></i> 返回报告</button>
+                <h1 id="major-title"></h1>
+                <h3>专业介绍</h3>
+                <p id="major-description"></p>
+                <h3 style="margin-top: 1.5rem;">就业前景</h3>
+                <p id="major-prospects"></p>
+            </div>
+        </section>
+
+        <!-- 成长营 -->
+        <section id="growth-page" class="page">
+            <div class="card">
+                <h2><i class="fas fa-brain"></i> 每日思维一练</h2>
+                <p>今日挑战：一个经典的逻辑推理题等你来解！</p>
+                <button class="btn" style="margin-top: 1rem;">开始挑战</button>
+            </div>
+            <h2><i class="fas fa-chalkboard-teacher"></i> 精品课程</h2>
+            <div class="item-list" id="courses-list"></div>
+        </section>
+
+        <!-- 社区 -->
+        <section id="community-page" class="page">
+            <h2><i class="fas fa-comments"></i> 热门帖子</h2>
+            <div class="item-list" id="posts-list"></div>
+        </section>
+
+        <!-- 个人中心 -->
+        <section id="profile-page" class="page">
+            <div class="card profile-header">
+                <img id="profile-avatar" src="https://i.pravatar.cc/150?u=guest" alt="avatar" class="profile-avatar">
+                <div class="profile-info">
+                    <h2 id="profile-name">游客</h2>
+                    <p id="profile-status">登录后可永久保存数据</p>
+                </div>
+                <button id="logout-btn" class="btn" style="margin-left: auto; display: none;">退出登录</button>
+            </div>
+            <div class="card">
+                <h3><i class="fas fa-history"></i> 我的测评历史</h3>
+                <div id="test-history">
+                    <p>暂无历史记录，完成一次测评后即可查看。</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 登录弹窗 -->
+    <div class="modal" id="login-modal">
+        <div class="modal-content">
+            <span class="modal-close" id="modal-close">&times;</span>
+            <h2>手机号登录</h2>
+            <input type="tel" id="phone-input" placeholder="请输入手机号">
+            <input type="text" placeholder="请输入验证码（任意数字）">
+            <button class="btn" id="confirm-login-btn">登录</button>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // --- 模拟数据 ---
+    const MOCK_DATA = {
+        questions: [
+            { id: 1, text: "你重生了，睁眼就在高考前夕的课堂上，老师正在讲一道复杂的物理题，你会：", options: ["A. 感觉既熟悉又陌生，尝试跟着老师思路听", "B. 太棒了！凭着记忆我就是学神，先睡一觉", "C. 物理是什么？我只想搞钱", "D. 拿出纸笔，立刻开始演算，试图超越老师"] },
+            { id: 2, text: "课后，同学邀请你参加一个编程兴趣小组，他们正在研究一个开源项目，你会：", options: ["A. 欣然加入，对未知的代码世界充满好奇", "B. 婉言拒绝，觉得这太耗费时间，不如刷题", "C. 询问这个项目是否能赚钱", "D. 觉得他们的代码不够优雅，想亲自重构"] },
+            { id: 3, text: "周末，你选择如何度过？", options: ["A. 去图书馆，系统性地学习和整理知识", "B. 宅在家里，打游戏或看剧放松", "C. 研究最新的商业模式和科技新闻", "D. 拆解一个旧电器，研究其内部构造"] }
+        ],
+        majors: [
+            { id: 'cs', name: '计算机科学与技术', description: '计算机科学与技术是研究计算机系统、软件设计、开发与应用以及相关理论的学科。它涵盖了从算法理论到人工智能、从软件工程到网络安全的广泛领域。', prospects: '就业前景广阔，可在互联网公司、金融机构、科研院所等从事软件开发、算法研究、系统运维等工作，是当前最热门的专业之一。' },
+            { id: 'ee', name: '电子信息工程', description: '电子信息工程是一门应用计算机等现代化技术进行电子信息控制和信息处理的学科，主要研究信息的获取与处理，电子设备与信息系统的设计、开发、应用和集成。', prospects: '毕业生可在通信、半导体、消费电子、航天等领域从事硬件设计、嵌入式系统开发、信号处理等工作，行业需求稳定且技术含量高。' }
+        ],
+        courses: [
+            { title: '理科思维入门课', image: 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=400', description: '建立系统的逻辑与结构化思维。' },
+            { title: 'Python编程先导课', image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400', description: '从零开始，掌握AI时代必备语言。' }
+        ],
+        posts: [
+            { author: '学长小A', avatar: 'https://i.pravatar.cc/150?u=a', title: '关于选专业，我想说几句真心话', content: '特别是对于想学计算机的同学，不要只看热门，兴趣和基础同样重要...' },
+            { author: '学姐小B', avatar: 'https://i.pravatar.cc/150?u=b', title: '物理真的有那么“劝退”吗？', content: '我的真实就读体验分享，给热爱物理但又在犹豫的你。' },
+            { author: 'Trae官方', avatar: 'https://i.pravatar.cc/150?u=trae', title: '思维提升打卡挑战第一期', content: '每日一题，连续打卡21天，赢取专属成就勋章！' }
+        ]
+    };
+
+    // --- DOM 元素获取 ---
+    const pages = document.querySelectorAll('.page');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const hamburger = document.getElementById('hamburger');
+    const navLinksContainer = document.getElementById('nav-links');
+    const loginModal = document.getElementById('login-modal');
+
+    // --- 状态管理 ---
+    let state = {
+        currentPage: 'home-page',
+        currentUser: null,
+        testProgress: {
+            currentQuestionIndex: 0,
+            answers: []
+        },
+        currentReport: null
+    };
+
+    // --- 本地存储 (localStorage) ---
+    const ls = {
+        get: (key) => JSON.parse(localStorage.getItem(key)),
+        set: (key, value) => localStorage.setItem(key, JSON.stringify(value)),
+        remove: (key) => localStorage.removeItem(key)
+    };
+
+    // --- 页面导航逻辑 ---
+    const navigateTo = (pageId) => {
+        pages.forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        
+        navLinks.forEach(l => l.classList.remove('active'));
+        const activeLink = document.querySelector(`.nav-link[data-page="${pageId}"]`);
+        if (activeLink) activeLink.classList.add('active');
+
+        state.currentPage = pageId;
+        window.scrollTo(0, 0);
+        navLinksContainer.classList.remove('active'); // 关闭移动端菜单
+    };
+
+    // --- 渲染逻辑 ---
+    const render = {
+        question: () => {
+            const { currentQuestionIndex } = state.testProgress;
+            const totalQuestions = 30; // 模拟30道题
+            const question = MOCK_DATA.questions[currentQuestionIndex % MOCK_DATA.questions.length];
+            
+            document.getElementById('progress-bar-inner').style.width = `${((currentQuestionIndex + 1) / totalQuestions) * 100}%`;
+            document.getElementById('question-title').textContent = `第 ${currentQuestionIndex + 1} 题: ${question.text}`;
+            
+            const optionsGrid = document.getElementById('options-grid');
+            optionsGrid.innerHTML = '';
+            question.options.forEach((opt, index) => {
+                const button = document.createElement('button');
+                button.className = 'btn option-btn';
+                button.textContent = opt;
+                button.onclick = () => handle.answer(index);
+                optionsGrid.appendChild(button);
+            });
+        },
+        report: (reportData) => {
+            document.getElementById('report-personality').textContent = reportData.personality;
+            document.getElementById('report-description').textContent = reportData.description;
+
+            const majorList = document.getElementById('major-list');
+            majorList.innerHTML = '';
+            reportData.majors.forEach(majorId => {
+                const major = MOCK_DATA.majors.find(m => m.id === majorId);
+                if (major) {
+                    const item = document.createElement('div');
+                    item.className = 'major-list-item';
+                    item.innerHTML = `<span>${major.name}</span><i class="fas fa-chevron-right"></i>`;
+                    item.onclick = () => {
+                        render.majorDetail(major.id);
+                        navigateTo('major-detail-page');
+                    };
+                    majorList.appendChild(item);
+                }
+            });
+
+            const ctx = document.getElementById('radar-chart').getContext('2d');
+            if (window.myRadarChart) window.myRadarChart.destroy();
+            window.myRadarChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['逻辑分析', '空间想象', '计算能力', '创新思维', '动手能力', '抽象思维', '观察力', '记忆力'],
+                    datasets: [{
+                        label: '能力评估',
+                        data: reportData.radarData,
+                        backgroundColor: 'rgba(74, 144, 226, 0.2)',
+                        borderColor: 'rgba(74, 144, 226, 1)',
+                        pointBackgroundColor: 'rgba(74, 144, 226, 1)',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#ddd' },
+                            grid: { color: '#ddd' },
+                            pointLabels: { font: { size: 12 } },
+                            suggestedMin: 0,
+                            suggestedMax: 10
+                        }
+                    }
+                }
+            });
+            navigateTo('report-page');
+        },
+        majorDetail: (majorId) => {
+            const major = MOCK_DATA.majors.find(m => m.id === majorId);
+            document.getElementById('major-title').textContent = major.name;
+            document.getElementById('major-description').textContent = major.description;
+            document.getElementById('major-prospects').textContent = major.prospects;
+        },
+        courses: () => {
+            const list = document.getElementById('courses-list');
+            list.innerHTML = MOCK_DATA.courses.map(course => `
+                <div class="card item-card">
+                    <img src="${course.image}" alt="${course.title}">
+                    <div class="item-card-content">
+                        <h3>${course.title}</h3>
+                        <p>${course.description}</p>
+                    </div>
+                </div>
+            `).join('');
+        },
+        posts: () => {
+            const list = document.getElementById('posts-list');
+            list.innerHTML = MOCK_DATA.posts.map(post => `
+                <div class="card item-card">
+                    <div class="item-card-content">
+                        <h3>${post.title}</h3>
+                        <p>${post.content}</p>
+                        <div class="item-card-meta" style="margin-top: 1rem;">
+                            <img src="${post.avatar}" alt="${post.author}">
+                            <span>${post.author}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        },
+        profile: () => {
+            if (state.currentUser) {
+                document.getElementById('profile-name').textContent = state.currentUser.name;
+                document.getElementById('profile-avatar').src = `https://i.pravatar.cc/150?u=${state.currentUser.phone}`;
+                document.getElementById('profile-status').textContent = `手机号: ${state.currentUser.phone}`;
+                document.getElementById('logout-btn').style.display = 'block';
+                document.getElementById('login-btn-nav').style.display = 'none';
+            } else {
+                document.getElementById('profile-name').textContent = '游客';
+                document.getElementById('profile-avatar').src = 'https://i.pravatar.cc/150?u=guest';
+                document.getElementById('profile-status').textContent = '登录后可永久保存数据';
+                document.getElementById('logout-btn').style.display = 'none';
+                document.getElementById('login-btn-nav').style.display = 'block';
+            }
+            
+            const historyContainer = document.getElementById('test-history');
+            const reports = ls.get('trae_reports') || [];
+            if (reports.length > 0) {
+                historyContainer.innerHTML = '';
+                reports.forEach((report, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'history-item';
+                    item.innerHTML = `<span>${report.date} - ${report.personality}</span><i class="fas fa-chevron-right"></i>`;
+                    item.onclick = () => {
+                        state.currentReport = report;
+                        render.report(report);
+                    };
+                    historyContainer.appendChild(item);
+                });
+            } else {
+                historyContainer.innerHTML = '<p>暂无历史记录，完成一次测评后即可查看。</p>';
+            }
+        }
+    };
+
+    // --- 事件处理逻辑 ---
+    const handle = {
+        startTest: () => {
+            state.testProgress = ls.get('trae_test_progress') || { currentQuestionIndex: 0, answers: [] };
+            render.question();
+            navigateTo('test-page');
+        },
+        answer: (optionIndex) => {
+            state.testProgress.answers.push(optionIndex);
+            state.testProgress.currentQuestionIndex++;
+            ls.set('trae_test_progress', state.testProgress);
+
+            if (state.testProgress.currentQuestionIndex >= 30) {
+                handle.submitTest();
+            } else {
+                render.question();
+            }
+        },
+        submitTest: () => {
+            // 模拟报告生成
+            const personalityTypes = ['逻辑学者', '建造大师', '创新先锋', '探索极客'];
+            const personality = personalityTypes[Math.floor(Math.random() * personalityTypes.length)];
+            const newReport = {
+                id: Date.now(),
+                date: new Date().toLocaleDateString(),
+                personality: personality,
+                description: `你是典型的“${personality}”，具备出色的理科思维潜质。你善于分析，追求真理，对世界充满好奇。`,
+                radarData: Array.from({length: 8}, () => Math.floor(Math.random() * 8) + 2),
+                majors: ['cs', 'ee']
+            };
+            
+            state.currentReport = newReport;
+            ls.set('trae_current_report', newReport);
+            
+            if (state.currentUser) {
+                const reports = ls.get('trae_reports') || [];
+                reports.push(newReport);
+                ls.set('trae_reports', reports);
+            }
+            
+            ls.remove('trae_test_progress');
+            render.report(newReport);
+        },
+        login: () => {
+            const phone = document.getElementById('phone-input').value;
+            if (phone.length === 11 && !isNaN(phone)) {
+                state.currentUser = { name: `用户${phone.slice(-4)}`, phone: phone };
+                ls.set('trae_user', state.currentUser);
+                loginModal.classList.remove('active');
+                render.profile();
+            } else {
+                alert('请输入有效的11位手机号');
+            }
+        },
+        logout: () => {
+            state.currentUser = null;
+            ls.remove('trae_user');
+            render.profile();
+        },
+        shareReport: () => {
+            navigator.clipboard.writeText(window.location.href)
+                .then(() => alert('分享链接已复制到剪贴板！'))
+                .catch(() => alert('复制失败，请手动分享。'));
+        },
+        saveReport: () => {
+            const reportElement = document.getElementById('report-page');
+            alert('正在生成图片，请稍候...');
+            html2canvas(reportElement, { useCORS: true }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `我的理科人生报告-${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+    };
+
+    // --- 事件监听器绑定 ---
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const pageId = e.target.dataset.page;
+            if (pageId) {
+                if (pageId === 'profile-page') render.profile();
+                navigateTo(pageId);
+            }
+        });
+    });
+    
+    document.querySelector('.nav-logo').addEventListener('click', (e) => {
+        e.preventDefault();
+        navigateTo('home-page');
+    });
+
+    hamburger.addEventListener('click', () => {
+        navLinksContainer.classList.toggle('active');
+    });
+
+    document.getElementById('start-test-btn-home').onclick = () => navigateTo('test-intro-page');
+    document.getElementById('start-test-btn-intro').onclick = handle.startTest;
+    document.getElementById('back-to-report-btn').onclick = () => navigateTo('report-page');
+    document.getElementById('share-report-btn').onclick = handle.shareReport;
+    document.getElementById('save-report-btn').onclick = handle.saveReport;
+
+    // 登录相关
+    document.getElementById('login-btn-nav').onclick = (e) => {
+        e.preventDefault();
+        loginModal.classList.add('active');
+    };
+    document.getElementById('modal-close').onclick = () => loginModal.classList.remove('active');
+    document.getElementById('confirm-login-btn').onclick = handle.login;
+    document.getElementById('logout-btn').onclick = handle.logout;
+
+    // --- 初始化 ---
+    const init = () => {
+        state.currentUser = ls.get('trae_user');
+        state.currentReport = ls.get('trae_current_report');
+        
+        if (state.currentReport) {
+            render.report(state.currentReport);
+        } else {
+            navigateTo('home-page');
+        }
+        
+        render.courses();
+        render.posts();
+        render.profile();
+    };
+
+    init();
+});
+</script>
+
+</body>
+</html>
